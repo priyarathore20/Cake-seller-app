@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from "react";
 import { initializeApp } from 'firebase/app'
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth'
 
-const FirebaseContext = createContext(null)
+const FirebaseContext = createContext()
 const firebaseConfig = {
   apiKey: "AIzaSyA2HC0F81Y4M1-ifGk7uW4IpKFuJr92XnI",
   authDomain: "my-app099.firebaseapp.com",
@@ -17,20 +17,23 @@ const auth = getAuth(FirebaseApp)
 const googleProvider = new GoogleAuthProvider()
 
 
-const firebaseProvider = (props) => {
+const FirebaseProvider = (props) => {
 
   const signInUserWithEmailAndPassword = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
   }
-  const signInUserWithGoogle = () => [
+  const signUpUserWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-  ]
+  }
+  const CreateUserWithEmailAndPassword = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password).then((value) => console.log(value)).catch((value) => console.log(value))
+  }
 
   return (
-    <FirebaseContext.Provider value={signInUserWithEmailAndPassword}>
+    <FirebaseContext.Provider value={{ signInUserWithEmailAndPassword, signUpUserWithGoogle, CreateUserWithEmailAndPassword }}>
       {props.children}
     </FirebaseContext.Provider>
   )
 }
 
-export default firebaseProvider
+export default FirebaseProvider
